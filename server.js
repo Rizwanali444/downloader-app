@@ -1,17 +1,20 @@
 const express = require('express');
 const cors = require('cors');
+const ytdl = require('ytdl-core');
 const path = require('path');
 const app = express();
 app.use(cors());
 
-app.use(express.static('public')); // Serve frontend files
+app.use(express.static('public'));
 
-// Demo download endpoint (backend logic yahan aayega)
-app.get('/api/download', (req, res) => {
+app.get('/api/download', async (req, res) => {
   const url = req.query.url;
   if (!url) return res.status(400).json({error: "URL required"});
-  // Yahan real downloader logic (yt-dlp ya kisi API) lagani hoti hai
-  res.json({ message: "Download requested for: " + url });
+  if (!ytdl.validateURL(url)) {
+    return res.status(400).json({error: "Invalid YouTube URL"});
+  }
+  res.header('Content-Disposition', 'attachment; filename="video.mp4"');
+  ytdl(url, { format: 'mp4' }).pipe(res);
 });
 
 const PORT = process.env.PORT || 3000;
