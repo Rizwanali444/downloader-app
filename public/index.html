@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Downloader App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Simple Downloader App</h1>
+  <input type="text" id="url" placeholder="Paste video URL here" />
+  <button onclick="download()">Download</button>
+  <div id="result"></div>
+  <script src="platforms.js"></script>
+  <script>
+    function download() {
+      const url = document.getElementById('url').value;
+      fetch(`/api/download?url=${encodeURIComponent(url)}`)
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('result').innerText = data.message || data.error;
+        });
+    }
+  </script>
+</body>
+</html>
